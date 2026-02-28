@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+
+  # ============================================
+  # Base de données PostgreSQL
+  # ============================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskflow-postgres
+    environment:
+      POSTGRES_DB: taskflow
+      POSTGRES_USER: taskflow_user
+      POSTGRES_PASSWORD: taskflow123
+    ports:
+      - "5433:5432"  # 5433 local → 5432 container
+                     # évite conflit avec PostgreSQL local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow_user -d taskflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Backend .NET
+  # ============================================
+  api:
+    build:
+      context: ./TaskFlow.API
+      dockerfile: Dockerfile
+    container_name: taskflow-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5229
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=taskflow;Username=taskflow_user;Password=taskflow123
+      - Jwt__Secret=taskflow-super-secret-key-2026-minimum-32-characters
+      - Jwt__Issuer=TaskFlow.API
+      - Jwt__Audience=TaskFlow.Client
+      - Jwt__ExpirationInDays=7
+    ports:
+      - "5229:5229"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Lance les migrations automatiquement au démarrage
+    command: >
+      sh -c "
+        dotnet TaskFlow.API.dll
+      "
+
+  # ============================================
+  # Frontend React
+  # ============================================
+  frontend:
+    build:
+      context: ./taskflow-client
+      dockerfile: Dockerfile
+    container_name: taskflow-frontend
+    ports:
+      - "3000:80"  # 3000 local → 80 container (Nginx)
+    depends_on:
+      - api
+
+# ============================================
+# Volumes persistants
+# ============================================
+volumes:
+  postgres_data:
