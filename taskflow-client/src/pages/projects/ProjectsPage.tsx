@@ -27,6 +27,7 @@ const ProjectsPage = () => {
             const data = await projectService.getProjects();
             setProjects(data);
         } catch (err) {
+            console.error(err);
             setError('Erreur lors du chargement des projets');
         } finally {
             setLoading(false);
@@ -47,6 +48,7 @@ const ProjectsPage = () => {
             setNewProjectDescription('');
             setShowForm(false);
         } catch (err) {
+            console.error(err);
             setError('Erreur lors de la création du projet');
         }
     };
@@ -57,6 +59,7 @@ const ProjectsPage = () => {
             // Supprime le projet de la liste
             setProjects(projects.filter(p => p.id !== id));
         } catch (err) {
+            console.error(err);
             setError('Erreur lors de la suppression');
         }
     };

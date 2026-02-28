@@ -2,13 +2,12 @@
 
 // On définit le type des props avec une interface TypeScript
 interface ProjectCardProps {
-    id: number;
     name: string;
     description?: string; // ? = optionnel
     createdAt: string;
 }
 
-const ProjectCard = ({ id, name, description, createdAt }: ProjectCardProps) => {
+const ProjectCard = ({  name, description, createdAt }: ProjectCardProps) => {
     return (
         <div style={{
             border: '1px solid #ccc',
