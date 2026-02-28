@@ -30,7 +30,7 @@ const LoginPage = () => {
             window.location.href = '/projects';
             
         } catch (err) {
-            setError('Email ou mot de passe incorrect');
+            setError(`Email ou mot de passe incorrect: ${err}`);
         } finally {
             setLoading(false);
         }

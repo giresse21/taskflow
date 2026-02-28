@@ -29,7 +29,7 @@ const RegisterPage = () => {
             window.location.href = '/projects';
 
         } catch (err) {
-            setError('Erreur lors de l\'inscription');
+            setError(`Erreur lors de l'inscription: ${err}`);
         } finally {
             setLoading(false);
         }

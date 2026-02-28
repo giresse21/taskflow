@@ -36,7 +36,7 @@ const TasksPage = () => {
             const data = await taskService.getTasks(Number(projectId));
             setTasks(data);
         } catch (err) {
-            setError('Erreur lors du chargement des tâches');
+            setError(`Erreur lors du chargement des tâches: ${err}`);
         } finally {
             setLoading(false);
         }
@@ -63,7 +63,7 @@ const TasksPage = () => {
             }
             resetForm();
         } catch (err) {
-            setError('Erreur lors de la sauvegarde');
+            setError(`Erreur lors de la sauvegarde: ${err}`);
         }
     };
 
@@ -72,7 +72,7 @@ const TasksPage = () => {
             const updated = await taskService.toggleTask(Number(projectId), task.id);
             setTasks(tasks.map(t => t.id === updated.id ? updated : t));
         } catch (err) {
-            setError('Erreur lors de la mise à jour');
+            setError(`Erreur lors de la mise à jour: ${err}`);
         }
     };
 
@@ -90,7 +90,7 @@ const TasksPage = () => {
             await taskService.deleteTask(Number(projectId), id);
             setTasks(tasks.filter(t => t.id !== id));
         } catch (err) {
-            setError('Erreur lors de la suppression');
+            setError(`Erreur lors de la suppression: ${err}`);
         }
     };
 
